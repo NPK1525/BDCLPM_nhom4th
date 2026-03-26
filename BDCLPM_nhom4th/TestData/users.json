@@ -3,6 +3,10 @@
     "username": "john",
     "password": "demo"
   },
+  "validUser2": {
+    "username": "TestTHkhang",
+    "password": "Khang@2026"
+  },
   "invalidUser": {
     "username": "wronguser",
     "password": "wrongpass"

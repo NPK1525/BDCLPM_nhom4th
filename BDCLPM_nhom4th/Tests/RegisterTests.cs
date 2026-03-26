@@ -226,5 +226,183 @@ namespace ParaBankTests.Tests
             Assert.That(registerPage.IsPhoneErrorDisplayed(), Is.True,
                 "Không hiển thị lỗi khi bỏ trống Phone.");
         }
+
+        /// <summary>
+        /// TC_TS_02_10: Bỏ trống trường Username
+        /// Expected: Hiển thị thông báo lỗi cho Username
+        /// </summary>
+        [Test]
+        [Description("TC_TS_02_10: Kiểm tra bỏ trống trường Username")]
+        public void TC_TS_02_10_Register_FailsWhenUsernameEmpty()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State, ZipCode, Phone, SSN,
+                "",         // Username bỏ trống
+                Password, Password
+            );
+
+            Assert.That(registerPage.IsUsernameErrorDisplayed(), Is.True,
+                "Không hiển thị lỗi khi bỏ trống Username.");
+        }
+
+        /// <summary>
+        /// TC_TS_02_11: Bỏ trống trường Password
+        /// Expected: Hiển thị thông báo lỗi cho Password
+        /// </summary>
+        [Test]
+        [Description("TC_TS_02_11: Kiểm tra bỏ trống trường Password")]
+        public void TC_TS_02_11_Register_FailsWhenPasswordEmpty()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State, ZipCode, Phone, SSN,
+                Username,
+                "",         // Password bỏ trống
+                Password
+            );
+
+            Assert.That(registerPage.IsPasswordErrorDisplayed(), Is.True,
+                "Không hiển thị lỗi khi bỏ trống Password.");
+        }
+
+        /// <summary>
+        /// TC_TS_02_12: Bỏ trống trường Confirm Password
+        /// Expected: Hiển thị thông báo lỗi cho Confirm Password
+        /// </summary>
+        [Test]
+        [Description("TC_TS_02_12: Kiểm tra bỏ trống trường Confirm Password")]
+        public void TC_TS_02_12_Register_FailsWhenConfirmPasswordEmpty()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State, ZipCode, Phone, SSN,
+                Username, Password,
+                ""          // Confirm Password bỏ trống
+            );
+
+            Assert.That(registerPage.IsPasswordErrorDisplayed(), Is.True,
+                "Không hiển thị lỗi khi bỏ trống Confirm Password.");
+        }
+
+        /// <summary>
+        /// TC_TS_03_01: Đăng ký với username đã tồn tại
+        /// Expected: Đăng ký thất bại, hiển thị thông báo lỗi
+        /// </summary>
+        [Test]
+        [Description("TC_TS_03_01: Kiểm tra đăng ký với username đã tồn tại")]
+        public void TC_TS_03_01_Register_FailsWithDuplicateUsername()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State, ZipCode, Phone, SSN,
+                "datontai",  // username đã tồn tại
+                Password, Password
+            );
+
+            Assert.That(registerPage.IsWelcomeDisplayed(), Is.False,
+                "Trang Welcome hiển thị dù username đã tồn tại.");
+            Assert.That(registerPage.IsUsernameErrorDisplayed(), Is.True,
+                "Không hiển thị lỗi khi dùng username đã tồn tại.");
+        }
+
+        /// <summary>
+        /// TC_TS_03_02: Hệ thống không chuyển trang khi lỗi username
+        /// Expected: Vẫn ở trang Register, dữ liệu nhập vẫn còn
+        /// </summary>
+        [Test]
+        [Description("TC_TS_03_02: Kiểm tra hệ thống không chuyển trang khi lỗi username")]
+        public void TC_TS_03_02_Register_StaysOnPageWhenUsernameError()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State, ZipCode, Phone, SSN,
+                Username, Password,
+                ""          // Confirm Password bỏ trống → lỗi
+            );
+
+            Assert.That(driver!.Url, Does.Contain("register"),
+                "Trang đã chuyển đi dù có lỗi.");
+        }
+
+        /// <summary>
+        /// TC_TS_04_01: Zip Code nhập chữ thay vì số
+        /// Expected: Đăng ký thất bại, hiển thị thông báo lỗi
+        /// </summary>
+        [Test]
+        [Description("TC_TS_04_01: Kiểm tra hiển thị lỗi khi Zip Code nhập chữ")]
+        public void TC_TS_04_01_Register_FailsWithInvalidZipCode()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State,
+                "abcde",    // Zip Code không hợp lệ
+                Phone, SSN,
+                Username, Password, Password
+            );
+
+            Assert.That(registerPage.IsZipCodeErrorDisplayed(), Is.True,
+                "Không hiển thị lỗi khi Zip Code nhập chữ.");
+        }
+
+        /// <summary>
+        /// TC_TS_04_02: Phone Number nhập chữ thay vì số
+        /// Expected: Đăng ký thất bại, hiển thị thông báo lỗi
+        /// </summary>
+        [Test]
+        [Description("TC_TS_04_02: Kiểm tra hiển thị lỗi khi Phone Number nhập chữ")]
+        public void TC_TS_04_02_Register_FailsWithInvalidPhone()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State, "70000",
+                "abc",      // Phone không hợp lệ
+                SSN,
+                Username, Password, Password
+            );
+
+            Assert.That(registerPage.IsPhoneErrorDisplayed(), Is.True,
+                "Không hiển thị lỗi khi Phone nhập chữ.");
+        }
+
+        /// <summary>
+        /// TC_TS_04_03: SSN nhập sai định dạng
+        /// Expected: Đăng ký thất bại, hiển thị thông báo lỗi
+        /// </summary>
+        [Test]
+        [Description("TC_TS_04_03: Kiểm tra hiển thị lỗi khi SSN nhập sai định dạng")]
+        public void TC_TS_04_03_Register_FailsWithInvalidSSN()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State, "70000", "abc",
+                "ssn@@@",   // SSN không hợp lệ
+                Username, Password, Password
+            );
+
+            Assert.That(registerPage.IsSsnErrorDisplayed(), Is.True,
+                "Không hiển thị lỗi khi SSN nhập sai định dạng.");
+        }
+
+        /// <summary>
+        /// TC_TS_04_04: Password không hợp lệ (quá ngắn)
+        /// Expected: Đăng ký thất bại, hiển thị thông báo lỗi
+        /// </summary>
+        [Test]
+        [Description("TC_TS_04_04: Kiểm tra hiển thị lỗi khi Password không hợp lệ")]
+        public void TC_TS_04_04_Register_FailsWithInvalidPassword()
+        {
+            registerPage.Register(
+                FirstName, LastName, Address, City,
+                State, "70000", "abc", "ssn@@@",
+                Username,
+                "T1",       // Password quá ngắn/không hợp lệ
+                "T1"
+            );
+
+            Assert.That(registerPage.IsPasswordErrorDisplayed(), Is.True,
+                "Không hiển thị lỗi khi Password không hợp lệ.");
+        }
     }
 }
+
